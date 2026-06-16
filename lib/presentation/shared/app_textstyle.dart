@@ -6,4 +6,10 @@ class AppTextstyle {
     fontWeight: FontWeight.w400,
     color: Color(0XFF000000)
   );
+
+  static const TextStyle tsSemiBoldRed32 = TextStyle(
+    fontSize: 32,
+    fontWeight: FontWeight.w500,
+    color: Color(0XFFF00000)
+  );
 }
