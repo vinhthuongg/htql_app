@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:htql_app/presentation/UI/certificate/widgets/certificate_body.dart';
 
 class CertificateScreen extends StatelessWidget {
   const CertificateScreen({super.key});
@@ -7,7 +8,8 @@ class CertificateScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(leading: BackButton()),
-      body: Center(child: Text('Certificate Screen')),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: SingleChildScrollView(child: CertificateBody()),
     );
   }
 }

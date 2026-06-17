@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:htql_app/presentation/UI/work/widgets/work_body.dart';
 
 class WorkScreen extends StatelessWidget {
   const WorkScreen({super.key});
@@ -7,7 +8,8 @@ class WorkScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(leading: BackButton()),
-      body: Center(child: Text('Work Screen')),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: SingleChildScrollView(child: WorkBody()),
     );
   }
 }

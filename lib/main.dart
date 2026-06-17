@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:htql_app/presentation/provider/attendance_provider.dart';
+import 'package:htql_app/presentation/provider/auth_provider.dart';
 import 'package:htql_app/presentation/provider/bottomnavigation_provider.dart';
 import 'package:htql_app/presentation/provider/docs_provider.dart';
 import 'package:htql_app/presentation/provider/leave_provider.dart';
+import 'package:htql_app/presentation/provider/reward_provider.dart';
 import 'package:htql_app/presentation/provider/theme_provider.dart';
 import 'package:htql_app/presentation/router/app_router.dart';
 import 'package:htql_app/presentation/theme/app_color.dart';
@@ -33,9 +36,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => AttendanceProvider()),
         ChangeNotifierProvider(create: (_) => BottomnavigationProvider()),
         ChangeNotifierProvider(create: (_) => DocsProvider()),
         ChangeNotifierProvider(create: (_) => LeaveProvider()),
+        ChangeNotifierProvider(create: (_) => RewardProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
       ],
       child: const MyAppbody(),
@@ -49,6 +55,10 @@ class MyAppbody extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final initialRoute = StorageService.instance.getAuthAccessToken().isNotEmpty
+        ? AppRouter.bottomNav
+        : AppRouter.loginScreen;
+
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
         return MaterialApp(
@@ -80,7 +90,7 @@ class MyAppbody extends StatelessWidget {
               surfaceTintColor: AppColor.black,
             ),
           ),
-          initialRoute: AppRouter.loginScreen,
+          initialRoute: initialRoute,
           routes: AppRouter().routes,
         );
       },

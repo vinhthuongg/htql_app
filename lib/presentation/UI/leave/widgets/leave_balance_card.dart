@@ -63,7 +63,7 @@ class LeaveBalanceCard extends StatelessWidget {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          AppText(text: '12', style: AppTextstyle.tsBoldRed28),
+                          AppText(text: '--', style: AppTextstyle.tsBoldRed28),
                           SizedBox(width: 6),
                           Padding(
                             padding: const EdgeInsets.only(bottom: 4),

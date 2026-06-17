@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:htql_app/presentation/provider/auth_provider.dart';
 import 'package:htql_app/presentation/provider/theme_provider.dart';
+import 'package:htql_app/presentation/router/app_router.dart';
+import 'package:htql_app/presentation/shared/app_avatar.dart';
 import 'package:htql_app/presentation/shared/app_text.dart';
 import 'package:htql_app/presentation/shared/app_textstyle.dart';
 import 'package:htql_app/presentation/theme/app_color.dart';
@@ -11,6 +14,8 @@ class HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final titleColor = AppColor.primaryTextColor(context);
+    final employee = context.watch<AuthProvider>().currentUser?.employee;
+    final employeeName = employee?.name;
 
     return Row(
       children: [
@@ -26,12 +31,20 @@ class HomeHeader extends StatelessWidget {
               ),
               SizedBox(height: 4),
               AppText(
-                text: 'Xin chào, Nguyễn Văn A',
+                text: 'Xin chào,',
+                textAlign: TextAlign.left,
+                style: AppTextstyle.tsMediumGrey14.copyWith(
+                  color: AppColor.secondaryTextColor(context),
+                ),
+              ),
+              SizedBox(height: 2),
+              AppText(
+                text: employeeName ?? 'Toyota',
                 textAlign: TextAlign.left,
                 style: AppTextstyle.tsSemiBoldBlack16.copyWith(
                   color: titleColor,
                 ),
-                maxLines: 1,
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
             ],
@@ -56,7 +69,7 @@ class HomeHeader extends StatelessWidget {
           elevation: 8,
           offset: const Offset(0, 44),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          onSelected: (value) {},
+          onSelected: (value) => _onMenuSelected(context, value),
           itemBuilder: (context) => [
             _buildMenuItem(
               context: context,
@@ -81,13 +94,11 @@ class HomeHeader extends StatelessWidget {
           child: Container(
             height: 42,
             width: 42,
-            padding: const EdgeInsets.all(2),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: AppColor.toyotaRed),
-            ),
-            child: const CircleAvatar(
-              backgroundImage: AssetImage('assets/images/img_avatar.jpg'),
+            alignment: Alignment.center,
+            child: AppAvatar(
+              size: 42,
+              avatarFileName: employee?.avatar,
+              borderWidth: 1.5,
             ),
           ),
         ),
@@ -120,6 +131,24 @@ class HomeHeader extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> _onMenuSelected(BuildContext context, String value) async {
+    if (value == 'profile') {
+      Navigator.pushNamed(context, AppRouter.personalScreen);
+      return;
+    }
+
+    if (value == 'logout') {
+      await context.read<AuthProvider>().logout();
+      if (!context.mounted) return;
+
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        AppRouter.loginScreen,
+        (route) => false,
+      );
+    }
   }
 }
 

@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:htql_app/data/models/auth/login_response.dart';
 import 'package:htql_app/presentation/UI/home/widgets/stat_card.dart';
+import 'package:htql_app/presentation/provider/auth_provider.dart';
+import 'package:htql_app/presentation/shared/app_avatar.dart';
 import 'package:htql_app/presentation/shared/app_text.dart';
 import 'package:htql_app/presentation/shared/app_textstyle.dart';
 import 'package:htql_app/presentation/theme/app_color.dart';
+import 'package:htql_app/presentation/utils/employee_display.dart';
+import 'package:provider/provider.dart';
 
 class InformationCard extends StatelessWidget {
   const InformationCard({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final employee = context.watch<AuthProvider>().currentUser?.employee;
     final cardColor = AppColor.cardColor(context);
     final mutedColor = AppColor.mutedCardColor(context);
     final borderColor = AppColor.borderColor(context);
@@ -66,8 +72,10 @@ class InformationCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: AppText(
-                        text: 'HCNS',
+                        text: _departmentName(employee),
                         style: AppTextstyle.tsMediumRed12,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
@@ -75,19 +83,10 @@ class InformationCard extends StatelessWidget {
                 SizedBox(height: 22),
                 Row(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(3),
-                      decoration: BoxDecoration(
-                        color: cardColor,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: AppColor.toyotaRed),
-                      ),
-                      child: const CircleAvatar(
-                        radius: 38,
-                        backgroundImage: AssetImage(
-                          'assets/images/img_avatar.jpg',
-                        ),
-                      ),
+                    AppAvatar(
+                      size: 82,
+                      avatarFileName: employee?.avatar,
+                      borderWidth: 2,
                     ),
                     SizedBox(width: 14),
                     Expanded(
@@ -95,23 +94,27 @@ class InformationCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           AppText(
-                            text: 'Nguyễn Văn A',
+                            text: EmployeeDisplay.value(employee?.name),
                             textAlign: TextAlign.left,
                             style: AppTextstyle.tsBoldBlack20.copyWith(
                               color: primaryTextColor,
                             ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                           SizedBox(height: 6),
                           _InformationLine(
                             iconPath: 'assets/icons/ic_rule.png',
-                            text: 'Nhân Viên IT',
+                            text: EmployeeDisplay.value(
+                              employee?.position?.name,
+                            ),
                             iconColor: secondaryTextColor,
                             textColor: secondaryTextColor,
                           ),
                           SizedBox(height: 4),
                           _InformationLine(
                             iconPath: 'assets/icons/ic_cty.png',
-                            text: 'Phòng HCNS',
+                            text: _departmentName(employee),
                             iconColor: secondaryTextColor,
                             textColor: secondaryTextColor,
                           ),
@@ -124,11 +127,14 @@ class InformationCard extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: StatCard(title: 'PHÉP CÒN', value: '12'),
+                      child: StatCard(title: 'PHÉP CÒN', value: '--'),
                     ),
                     SizedBox(width: 12),
                     Expanded(
-                      child: StatCard(title: 'CHỨNG CHỈ', value: '5'),
+                      child: StatCard(
+                        title: 'ĐIỂM THƯỞNG',
+                        value: EmployeeDisplay.value(employee?.rewardPoints),
+                      ),
                     ),
                   ],
                 ),
@@ -138,6 +144,10 @@ class InformationCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _departmentName(Employee? employee) {
+    return EmployeeDisplay.value(employee?.position?.department?.name);
   }
 }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:htql_app/presentation/UI/transfer/widgets/transfer_body.dart';
 
 class TransferScreen extends StatelessWidget {
   const TransferScreen({super.key});
@@ -7,7 +8,8 @@ class TransferScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(leading: BackButton()),
-      body: Center(child: Text('Transfer Screen')),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: SingleChildScrollView(child: TransferBody()),
     );
   }
 }

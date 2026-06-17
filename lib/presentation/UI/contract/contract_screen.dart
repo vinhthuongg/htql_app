@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:htql_app/presentation/UI/contract/widgets/contract_body.dart';
 
 class ContractScreen extends StatelessWidget {
   const ContractScreen({super.key});
@@ -7,7 +8,8 @@ class ContractScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(leading: BackButton()),
-      body: Center(child: Text('Contract Screen')),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: SingleChildScrollView(child: ContractBody()),
     );
   }
 }

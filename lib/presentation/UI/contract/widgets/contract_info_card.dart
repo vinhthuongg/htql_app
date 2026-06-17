@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:htql_app/data/models/auth/login_response.dart';
-import 'package:htql_app/presentation/provider/auth_provider.dart';
 import 'package:htql_app/presentation/shared/app_text.dart';
 import 'package:htql_app/presentation/shared/app_textstyle.dart';
 import 'package:htql_app/presentation/theme/app_color.dart';
 import 'package:htql_app/presentation/utils/employee_display.dart';
-import 'package:provider/provider.dart';
 
-class PersonalInfoCard extends StatelessWidget {
-  const PersonalInfoCard({super.key});
+class ContractInfoCard extends StatelessWidget {
+  const ContractInfoCard({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final employee = context.watch<AuthProvider>().currentUser?.employee;
     final cardColor = AppColor.cardColor(context);
     final mutedColor = AppColor.mutedCardColor(context);
     final borderColor = AppColor.borderColor(context);
@@ -46,13 +42,13 @@ class PersonalInfoCard extends StatelessWidget {
                     Container(width: 4, height: 22, color: AppColor.toyotaRed),
                     SizedBox(width: 8),
                     Icon(
-                      Icons.person_outline,
+                      Icons.description_outlined,
                       color: primaryTextColor,
                       size: 20,
                     ),
                     SizedBox(width: 8),
                     AppText(
-                      text: 'Thông tin cá nhân',
+                      text: 'Thông tin hợp đồng',
                       textAlign: TextAlign.left,
                       style: AppTextstyle.tsSemiBoldBlack16.copyWith(
                         color: primaryTextColor,
@@ -61,58 +57,44 @@ class PersonalInfoCard extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 16),
-                _InfoRow(
-                  icon: Icons.phone_outlined,
-                  label: 'Số điện thoại',
-                  value: EmployeeDisplay.value(employee?.phone),
+                _ContractInfoRow(
+                  label: 'Số HĐ',
+                  value: EmployeeDisplay.empty,
+                  icon: Icons.confirmation_number_outlined,
                   mutedColor: mutedColor,
                   borderColor: borderColor,
                   primaryTextColor: primaryTextColor,
                   secondaryTextColor: secondaryTextColor,
                 ),
                 SizedBox(height: 10),
-                _InfoRow(
-                  icon: Icons.email_outlined,
-                  label: 'Email',
-                  value: _email(employee),
+                _ContractInfoRow(
+                  label: 'Loại hợp đồng',
+                  value: EmployeeDisplay.empty,
+                  icon: Icons.article_outlined,
                   mutedColor: mutedColor,
                   borderColor: borderColor,
                   primaryTextColor: primaryTextColor,
                   secondaryTextColor: secondaryTextColor,
                 ),
                 SizedBox(height: 10),
-                _InfoRow(
-                  icon: Icons.cake_outlined,
-                  label: 'Ngày sinh',
-                  value: EmployeeDisplay.date(employee?.dateOfBirth),
+                _ContractInfoRow(
+                  label: 'Ngày ký HĐ',
+                  value: EmployeeDisplay.empty,
+                  icon: Icons.edit_calendar_outlined,
                   mutedColor: mutedColor,
                   borderColor: borderColor,
                   primaryTextColor: primaryTextColor,
                   secondaryTextColor: secondaryTextColor,
                 ),
                 SizedBox(height: 10),
-                _InfoRow(
-                  icon: Icons.family_restroom_outlined,
-                  label: 'Người thân',
-                  value: EmployeeDisplay.relative(
-                    name: employee?.relative,
-                    phone: employee?.relativePhone,
-                  ),
+                _ContractInfoRow(
+                  label: 'Ngày kết thúc HĐ',
+                  value: EmployeeDisplay.empty,
+                  icon: Icons.event_busy_outlined,
                   mutedColor: mutedColor,
                   borderColor: borderColor,
                   primaryTextColor: primaryTextColor,
                   secondaryTextColor: secondaryTextColor,
-                ),
-                SizedBox(height: 10),
-                _InfoRow(
-                  icon: Icons.location_on_outlined,
-                  label: 'Địa chỉ',
-                  value: _address(employee),
-                  mutedColor: mutedColor,
-                  borderColor: borderColor,
-                  primaryTextColor: primaryTextColor,
-                  secondaryTextColor: secondaryTextColor,
-                  maxLines: 2,
                 ),
               ],
             ),
@@ -121,44 +103,26 @@ class PersonalInfoCard extends StatelessWidget {
       ),
     );
   }
-
-  String _email(Employee? employee) {
-    return EmployeeDisplay.email(
-      companyEmail: employee?.companyEmail,
-      personalEmail: employee?.personalEmail,
-    );
-  }
-
-  String _address(Employee? employee) {
-    final contactAddress = employee?.contactAddress;
-    if (contactAddress != null && contactAddress.trim().isNotEmpty) {
-      return EmployeeDisplay.value(contactAddress);
-    }
-
-    return EmployeeDisplay.value(employee?.permanentAddress);
-  }
 }
 
-class _InfoRow extends StatelessWidget {
-  const _InfoRow({
-    required this.icon,
+class _ContractInfoRow extends StatelessWidget {
+  const _ContractInfoRow({
     required this.label,
     required this.value,
+    required this.icon,
     required this.mutedColor,
     required this.borderColor,
     required this.primaryTextColor,
     required this.secondaryTextColor,
-    this.maxLines = 1,
   });
 
-  final IconData icon;
   final String label;
   final String value;
+  final IconData icon;
   final Color mutedColor;
   final Color borderColor;
   final Color primaryTextColor;
   final Color secondaryTextColor;
-  final int maxLines;
 
   @override
   Widget build(BuildContext context) {
@@ -200,7 +164,7 @@ class _InfoRow extends StatelessWidget {
                   style: AppTextstyle.tsSemiBoldBlack14.copyWith(
                     color: primaryTextColor,
                   ),
-                  maxLines: maxLines,
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
