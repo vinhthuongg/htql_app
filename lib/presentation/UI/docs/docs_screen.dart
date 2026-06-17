@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:htql_app/presentation/UI/docs/widgets/docs_body.dart';
 
 class DocsScreen extends StatelessWidget {
   const DocsScreen({super.key});
@@ -6,7 +7,8 @@ class DocsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child: Text('Docs Screen')),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: SingleChildScrollView(child: DocsBody()),
     );
   }
 }

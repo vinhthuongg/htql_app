@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:htql_app/presentation/provider/bottomnavigation_provider.dart';
+import 'package:htql_app/presentation/provider/docs_provider.dart';
+import 'package:htql_app/presentation/provider/leave_provider.dart';
+import 'package:htql_app/presentation/provider/theme_provider.dart';
 import 'package:htql_app/presentation/router/app_router.dart';
+import 'package:htql_app/presentation/theme/app_color.dart';
+import 'package:htql_app/services/storage_service.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+Future<void> main() async {
   // /// instance test
   // /// instance test1
   // final test1 = TestClass(name: 'Flutter');
@@ -15,8 +20,8 @@ void main() {
   // print(identical(test1, test2)); // should print false
   // WidgetsFlutterBinding.ensureInitialized();
 
-  /// initialize StorageService singleton
-  // await StorageService.instance.init();
+  WidgetsFlutterBinding.ensureInitialized();
+  await StorageService.instance.init();
 
   runApp(const MyApp());
 }
@@ -26,12 +31,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(providers:   [
-      ChangeNotifierProvider(create: (_) => BottomnavigationProvider()),
-    ], child: const MyAppbody());
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => BottomnavigationProvider()),
+        ChangeNotifierProvider(create: (_) => DocsProvider()),
+        ChangeNotifierProvider(create: (_) => LeaveProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+      ],
+      child: const MyAppbody(),
+    );
   }
 }
-
 
 class MyAppbody extends StatelessWidget {
   const MyAppbody({super.key});
@@ -39,15 +49,41 @@ class MyAppbody extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
-      ),
-      initialRoute: AppRouter.loginScreen,
-      routes: AppRouter().routes,
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Flutter Demo',
+          themeMode: themeProvider.themeMode,
+          theme: ThemeData(
+            brightness: Brightness.light,
+            scaffoldBackgroundColor: AppColor.background,
+            colorScheme: ColorScheme.fromSeed(seedColor: AppColor.toyotaRed),
+            appBarTheme: AppBarTheme(
+              backgroundColor: AppColor.background,
+              foregroundColor: AppColor.black,
+              elevation: 0,
+              surfaceTintColor: AppColor.background,
+            ),
+          ),
+          darkTheme: ThemeData(
+            brightness: Brightness.dark,
+            scaffoldBackgroundColor: AppColor.black,
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: AppColor.toyotaRed,
+              brightness: Brightness.dark,
+            ),
+            appBarTheme: AppBarTheme(
+              backgroundColor: AppColor.black,
+              foregroundColor: AppColor.white,
+              elevation: 0,
+              surfaceTintColor: AppColor.black,
+            ),
+          ),
+          initialRoute: AppRouter.loginScreen,
+          routes: AppRouter().routes,
+        );
+      },
     );
   }
 }
-

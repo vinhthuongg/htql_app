@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:htql_app/presentation/shared/app_textstyle.dart';
+import 'package:htql_app/presentation/theme/app_color.dart';
 
 class AppButton extends StatelessWidget {
   final VoidCallback? onTap;
@@ -12,11 +14,16 @@ class AppButton extends StatelessWidget {
       child: Container(
         height: 50,
         decoration: BoxDecoration(
-          color: Colors.red,
+          color: AppColor.toyotaRed,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Center(
-          child: Text(text, style: TextStyle(color: Colors.white)),
+          child: Text(
+            text,
+            style: AppTextstyle.tsSemiBoldBlack16.copyWith(
+              color: AppColor.white,
+            ),
+          ),
         ),
       ),
     );

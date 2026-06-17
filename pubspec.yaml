@@ -40,6 +40,9 @@ dependencies:
 
   #UI
   flutter_svg: ^2.3.0
+  
+  #local storage
+  shared_preferences: ^2.5.5
 
 dev_dependencies:
   flutter_test:
