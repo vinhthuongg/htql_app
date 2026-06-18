@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "53399534281",
+    "project_id": "tkg-app-25ea2",
+    "storage_bucket": "tkg-app-25ea2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:53399534281:android:8ec5ce0770f9d62cf2ab18",
+        "android_client_info": {
+          "package_name": "tkg.app.android"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDbNUBCGBc736kTBf4a5s0F7ZIi_1yltYM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

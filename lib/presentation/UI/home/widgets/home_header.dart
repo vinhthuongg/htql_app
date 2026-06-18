@@ -62,7 +62,12 @@ class HomeHeader extends StatelessWidget {
           },
         ),
         SizedBox(width: 8),
-        _HeaderIconButton(icon: Icons.notifications_none_rounded, onTap: () {}),
+        _HeaderIconButton(
+          icon: Icons.notifications_none_rounded,
+          onTap: () {
+            Navigator.pushNamed(context, AppRouter.notificationScreen);
+          },
+        ),
         SizedBox(width: 8),
         PopupMenuButton<String>(
           color: AppColor.cardColor(context),
@@ -136,6 +141,11 @@ class HomeHeader extends StatelessWidget {
   Future<void> _onMenuSelected(BuildContext context, String value) async {
     if (value == 'profile') {
       Navigator.pushNamed(context, AppRouter.personalScreen);
+      return;
+    }
+
+    if (value == 'change_password') {
+      Navigator.pushNamed(context, AppRouter.changePasswordScreen);
       return;
     }
 

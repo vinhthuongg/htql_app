@@ -9,6 +9,7 @@ class StorageService {
   static const String rememberedLoginEnabledKey = 'remembered_login_enabled';
   static const String rememberedUsernameKey = 'remembered_username';
   static const String rememberedPasswordKey = 'remembered_password';
+  static const String fcmTokenKey = 'fcm_token';
 
   late final SharedPreferences _preferences;
 
@@ -98,5 +99,17 @@ class StorageService {
       remove(rememberedUsernameKey),
       remove(rememberedPasswordKey),
     ]);
+  }
+
+  String getFcmToken() {
+    return getString(fcmTokenKey);
+  }
+
+  Future<void> saveFcmToken(String token) async {
+    await setString(fcmTokenKey, token);
+  }
+
+  Future<void> clearFcmToken() async {
+    await remove(fcmTokenKey);
   }
 }

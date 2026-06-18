@@ -1,4 +1,4 @@
-package com.example.htql_app
+package tkg.app.android
 
 import io.flutter.embedding.android.FlutterActivity
 

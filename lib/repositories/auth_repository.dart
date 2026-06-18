@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:htql_app/data/api/auth_api.dart';
 import 'package:htql_app/data/api/dio_client.dart';
 import 'package:htql_app/data/models/auth/login_response.dart';
+import 'package:htql_app/repositories/fcm_repository.dart';
 import 'package:htql_app/services/avatar_storage_service.dart';
 import 'package:htql_app/services/storage_service.dart';
 
@@ -12,14 +14,17 @@ class AuthRepository {
     AuthApi? authApi,
     StorageService? storageService,
     AvatarStorageService? avatarStorageService,
+    FcmRepository? fcmRepository,
   }) : _authApi = authApi ?? AuthApi(DioClient.create()),
        _storageService = storageService ?? StorageService.instance,
        _avatarStorageService =
-           avatarStorageService ?? AvatarStorageService.instance;
+           avatarStorageService ?? AvatarStorageService.instance,
+       _fcmRepository = fcmRepository ?? FcmRepository();
 
   final AuthApi _authApi;
   final StorageService _storageService;
   final AvatarStorageService _avatarStorageService;
+  final FcmRepository _fcmRepository;
 
   String get accessToken => _storageService.getAuthAccessToken();
 
@@ -40,6 +45,7 @@ class AuthRepository {
     required String password,
   }) async {
     try {
+      debugPrint('[FCM][Auth] login start, username=$username');
       final response = await _authApi.login(
         username: username,
         password: password,
@@ -66,6 +72,14 @@ class AuthRepository {
         }
       }
 
+      try {
+        debugPrint('[FCM][Auth] login success, sync FCM token start');
+        await _fcmRepository.saveCurrentDeviceToken();
+        debugPrint('[FCM][Auth] login success, sync FCM token completed');
+      } catch (error) {
+        debugPrint('[FCM][Auth] login success, sync FCM token failed=$error');
+      }
+
       return response;
     } on DioException catch (error) {
       throw AuthException(_getDioErrorMessage(error));
@@ -73,6 +87,9 @@ class AuthRepository {
   }
 
   Future<void> logout() async {
+    debugPrint('[FCM][Auth] logout start, delete FCM token before clear auth');
+    await _fcmRepository.deleteCurrentDeviceToken();
+    debugPrint('[FCM][Auth] logout delete FCM token completed');
     await _avatarStorageService.clearAvatar();
     await _storageService.clearAuth();
   }

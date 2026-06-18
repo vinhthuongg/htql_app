@@ -94,10 +94,24 @@ class HomeBody extends StatelessWidget {
                 },
               ),
               CategoryButton(
+                title: 'Tăng Ca',
+                icon: Icons.more_time_outlined,
+                onTap: () {
+                  Navigator.pushNamed(context, AppRouter.overtimeScreen);
+                },
+              ),
+              CategoryButton(
                 title: 'Bảng Lương',
                 icon: Icons.account_balance_outlined,
                 onTap: () {
                   Navigator.pushNamed(context, AppRouter.salaryScreen);
+                },
+              ),
+              CategoryButton(
+                title: 'Ứng Lương',
+                icon: Icons.savings_outlined,
+                onTap: () {
+                  Navigator.pushNamed(context, AppRouter.salaryAdvanceScreen);
                 },
               ),
             ],

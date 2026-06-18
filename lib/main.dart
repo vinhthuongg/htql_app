@@ -1,15 +1,31 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:htql_app/presentation/provider/attendance_provider.dart';
 import 'package:htql_app/presentation/provider/auth_provider.dart';
 import 'package:htql_app/presentation/provider/bottomnavigation_provider.dart';
 import 'package:htql_app/presentation/provider/docs_provider.dart';
+import 'package:htql_app/presentation/provider/feedback_provider.dart';
 import 'package:htql_app/presentation/provider/leave_provider.dart';
+import 'package:htql_app/presentation/provider/notification_provider.dart';
 import 'package:htql_app/presentation/provider/reward_provider.dart';
 import 'package:htql_app/presentation/provider/theme_provider.dart';
+import 'package:htql_app/presentation/provider/weather_reminder_provider.dart';
 import 'package:htql_app/presentation/router/app_router.dart';
 import 'package:htql_app/presentation/theme/app_color.dart';
+import 'package:htql_app/repositories/fcm_repository.dart';
 import 'package:htql_app/services/storage_service.dart';
+import 'package:htql_app/services/fcm_service.dart';
+import 'package:htql_app/services/weather_notification_service.dart';
 import 'package:provider/provider.dart';
+
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  debugPrint(
+    '[FCM][Background] messageId=${message.messageId}, title=${message.notification?.title}, data=${message.data}',
+  );
+}
 
 Future<void> main() async {
   // /// instance test
@@ -25,6 +41,41 @@ Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await StorageService.instance.init();
+  debugPrint('[FCM][Main] StorageService initialized');
+  debugPrint('[FCM][Main] Firebase initialize start');
+  await Firebase.initializeApp();
+  debugPrint('[FCM][Main] Firebase initialize completed');
+  await FirebaseMessaging.instance.setAutoInitEnabled(true);
+  debugPrint(
+    '[FCM][Main] Messaging auto init enabled=${FirebaseMessaging.instance.isAutoInitEnabled}',
+  );
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  debugPrint('[FCM][Main] Background message handler registered');
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+  debugPrint('[FCM][Main] Foreground notification presentation enabled');
+  await WeatherNotificationService.instance.init();
+  await FcmService().ensureAndroidNotificationChannel();
+
+  final fcmRepository = FcmRepository();
+  fcmRepository.listenTokenRefresh();
+  debugPrint('[FCM][Main] Startup token sync requested');
+  fcmRepository.saveCurrentDeviceToken().catchError((error) {
+    debugPrint('[FCM][Main] Startup token sync failed=$error');
+  });
+  FirebaseMessaging.onMessage.listen((message) {
+    debugPrint(
+      '[FCM][Foreground] messageId=${message.messageId}, title=${message.notification?.title}, body=${message.notification?.body}, data=${message.data}',
+    );
+  });
+  FirebaseMessaging.onMessageOpenedApp.listen((message) {
+    debugPrint(
+      '[FCM][OpenedApp] messageId=${message.messageId}, title=${message.notification?.title}, data=${message.data}',
+    );
+  });
 
   runApp(const MyApp());
 }
@@ -40,9 +91,15 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AttendanceProvider()),
         ChangeNotifierProvider(create: (_) => BottomnavigationProvider()),
         ChangeNotifierProvider(create: (_) => DocsProvider()),
+        ChangeNotifierProvider(create: (_) => FeedbackProvider()),
         ChangeNotifierProvider(create: (_) => LeaveProvider()),
+        ChangeNotifierProvider(create: (_) => NotificationProvider()),
         ChangeNotifierProvider(create: (_) => RewardProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(
+          lazy: false,
+          create: (_) => WeatherReminderProvider(),
+        ),
       ],
       child: const MyAppbody(),
     );
